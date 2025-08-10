@@ -1,3 +1,7 @@
+#!/bin/bash
+source /opt/dlami/nvme/caoyuan/miniconda/bin/activate
+conda activate lora
+
 torchrun --nproc_per_node=8 generate.py \
     --task ti2v-5B \
     --size 1280*704 \

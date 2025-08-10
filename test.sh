@@ -2,7 +2,8 @@
 source /opt/dlami/nvme/caoyuan/miniconda/bin/activate
 conda activate lora
 
-torchrun --nproc_per_node=8 generate.py \
+export CUDA_VISIBLE_DEVICES=0,1,2,3
+torchrun --nproc_per_node=4 generate.py \
     --task ti2v-5B \
     --size 1280*704 \
     --ckpt_dir /lustre/fsw/portfolios/av/users/shiyil/jfxiao/DiffSynth-Studio/models/Wan-AI/Wan2.2-TI2V-5B \

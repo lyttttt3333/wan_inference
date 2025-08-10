@@ -167,7 +167,7 @@ class WanTI2V:
                  frame_num=81,
                  shift=5.0,
                  sample_solver='unipc',
-                 sampling_steps=50,
+                 sampling_steps=3,
                  guide_scale=5.0,
                  n_prompt="",
                  seed=-1,
@@ -509,7 +509,11 @@ class WanTI2V:
             context = [t.to(self.device) for t in context]
             context_null = [t.to(self.device) for t in context_null]
 
+        print("before")
+        print(img.shape)
         z = self.vae.encode([img])
+        print("after")
+        print(z[0].shape)
 
         @contextmanager
         def noop_no_sync():
@@ -549,6 +553,8 @@ class WanTI2V:
             latent = noise
             mask1, mask2 = masks_like([noise], zero=True)
             latent = (1. - mask2[0]) * z[0] + mask2[0] * latent
+
+            print("latent shape", latent.shape)
 
             arg_c = {
                 'context': [context[0]],
@@ -599,6 +605,10 @@ class WanTI2V:
 
                 x0 = [latent]
                 del latent_model_input, timestep
+
+            print("############ prepare to decode")
+            print(x0)
+            print(x0[0].shape)
 
             if offload_model:
                 self.model.cpu()

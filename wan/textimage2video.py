@@ -585,6 +585,9 @@ class WanTI2V:
                 ])
                 timestep = temp_ts.unsqueeze(0)
 
+                print("time step", timestep.shape)
+                print(timestep)
+
                 noise_pred_cond = self.model(
                     latent_model_input, t=timestep, **arg_c)[0]
                 if offload_model:

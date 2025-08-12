@@ -555,7 +555,6 @@ class WanTI2V:
             latent = (1. - mask2[0]) * z[0] + mask2[0] * latent
 
             print("latent shape", latent.shape)
-            print("mask2 shape",mask2)
             print("mask2 shape",mask2[0].shape)
 
             arg_c = {

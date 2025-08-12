@@ -612,7 +612,6 @@ class WanTI2V:
                 del latent_model_input, timestep
 
             print("############ prepare to decode")
-            print(x0)
             print(x0[0].shape)
 
             if offload_model:

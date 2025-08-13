@@ -509,8 +509,8 @@ class WanTI2V:
             context = [t.to(self.device) for t in context]
             context_null = [t.to(self.device) for t in context_null]
 
-        print(f" context shape {context.shape}")
-        context = text_token.to(context.dtype).to(context.device)
+        print(f" context shape {context[0].shape}")
+        
 
         print("before")
         print(img.shape)
@@ -529,6 +529,7 @@ class WanTI2V:
         print(f"text token {text_token.shape}")
 
         z = [frame_token.to(z[0].device).to(z[0].dtype)]
+        context = [text_token.to(context[0].dtype).to(context[0].device)]
 
         @contextmanager
         def noop_no_sync():

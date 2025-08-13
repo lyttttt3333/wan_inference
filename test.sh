@@ -1,4 +1,7 @@
 #!/bin/bash
+
+git pull origin master
+
 source /opt/dlami/nvme/caoyuan/miniconda/bin/activate
 conda activate lora
 

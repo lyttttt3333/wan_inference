@@ -485,7 +485,10 @@ class WanTI2V:
                 - W: Frame width (from max_area)
         """
         # preprocess
-        ih, iw = (704, 1248)#img.height, img.width
+        img, img_tensor = get_first_frame_as_tensor(video_path)
+        print(type(img_pil))       # <class 'PIL.Image.Image'>
+        print(img_tensor.shape)    # [3, H, W]
+        ih, iw = img.height, img.width
         dh, dw = self.patch_size[1] * self.vae_stride[1], self.patch_size[
             2] * self.vae_stride[2]
         ow, oh = best_output_size(iw, ih, dw, dh, max_area)
@@ -494,11 +497,9 @@ class WanTI2V:
 
         # 示例
         video_path = "/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/videos/8e2031d1-cbe4-4b5a-a54f-893df6805394.mp4"
-        img_pil, img_tensor = get_first_frame_as_tensor(video_path)
-        print(type(img_pil))       # <class 'PIL.Image.Image'>
-        print(img_tensor.shape)    # [3, H, W]
 
-        img = img_pil.resize((round(iw * scale), round(ih * scale)), Image.LANCZOS)
+
+        img = img.resize((round(iw * scale), round(ih * scale)), Image.LANCZOS)
 
         # center-crop
         x1 = (img.width - ow) // 2

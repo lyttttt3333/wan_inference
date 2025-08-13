@@ -487,8 +487,6 @@ class WanTI2V:
         # preprocess
         video_path = "/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/videos/8e2031d1-cbe4-4b5a-a54f-893df6805394.mp4"
         img, img_tensor = get_first_frame_as_tensor(video_path)
-        print(type(img_pil))       # <class 'PIL.Image.Image'>
-        print(img_tensor.shape)    # [3, H, W]
         ih, iw = img.height, img.width
         dh, dw = self.patch_size[1] * self.vae_stride[1], self.patch_size[
             2] * self.vae_stride[2]

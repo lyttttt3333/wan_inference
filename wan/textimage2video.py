@@ -459,7 +459,7 @@ class WanTI2V:
                 - W: Frame width (from max_area)
         """
         # preprocess
-        ih, iw = img.height, img.width
+        ih, iw = (704, 1248)#img.height, img.width
         dh, dw = self.patch_size[1] * self.vae_stride[1], self.patch_size[
             2] * self.vae_stride[2]
         ow, oh = best_output_size(iw, ih, dw, dh, max_area)
@@ -529,7 +529,7 @@ class WanTI2V:
         print(f"text token {text_token.shape}")
 
         z = [frame_token.to(z[0].device).to(z[0].dtype)]
-        context = [text_token.to(context[0].dtype).to(context[0].device)]
+        context = [text_token[0].to(context[0].dtype).to(context[0].device)]
 
         @contextmanager
         def noop_no_sync():

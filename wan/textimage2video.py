@@ -606,7 +606,10 @@ class WanTI2V:
 
             # sample videos
             latent = noise
+            mask = torch.ones_like(noise)
+            mask[:, 0] = 0
             mask1, mask2 = masks_like([noise], zero=True)
+            mask2[0] = mask
             latent = (1. - mask2[0]) * z[0] + mask2[0] * latent
 
             print("latent shape", latent.shape)

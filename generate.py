@@ -341,7 +341,7 @@ def generate(args):
         )
 
         logging.info(f"Generating video ...")
-        video = wan_ti2v.generate(
+        video, base_name = wan_ti2v.generate(
             args.prompt,
             img=img,
             size=SIZE_CONFIGS[args.size],
@@ -391,7 +391,7 @@ def generate(args):
         logging.info(f"Saving generated video to {args.save_file}")
         save_video(
             tensor=video[None],
-            save_file=args.save_file,
+            save_file=f"{base_name}.mp4",
             fps=cfg.sample_fps,
             nrow=1,
             normalize=True,

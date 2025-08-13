@@ -8,6 +8,7 @@ import sys
 import types
 from contextlib import contextmanager
 from functools import partial
+import pandas as pd
 
 import torch
 import torch.cuda.amp as amp
@@ -485,7 +486,12 @@ class WanTI2V:
                 - W: Frame width (from max_area)
         """
         # preprocess
-        video_path = "/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/videos/8e2031d1-cbe4-4b5a-a54f-893df6805394.mp4"
+        meta_path = "/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/meta.csv"
+        df = pd.read_csv(meta_path)
+        base_name_list = df["basename"].astype(str).tolist()
+        base_name = base_name_list[0]
+
+        video_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/videos/{base_name}.mp4"
         img, img_tensor = get_first_frame_as_tensor(video_path)
         ih, iw = img.height, img.width
         dh, dw = self.patch_size[1] * self.vae_stride[1], self.patch_size[
@@ -551,9 +557,9 @@ class WanTI2V:
         print("after")
         print(z[0].shape)
 
-        base_name = "8e2031d1-cbe4-4b5a-a54f-893df6805394"
-        text_token_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/text_token/8e2031d1-cbe4-4b5a-a54f-893df6805394.pth"
-        frame_token_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/frame_token/8e2031d1-cbe4-4b5a-a54f-893df6805394.pth"
+        # base_name = "8e2031d1-cbe4-4b5a-a54f-893df6805394"
+        text_token_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/text_token/{base_name}.pth"
+        frame_token_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/frame_token/{base_name}.pth"
 
         text_token = torch.load(text_token_path, map_location = "cpu")
         frame_token = torch.load(frame_token_path, map_location = "cpu")
@@ -561,8 +567,8 @@ class WanTI2V:
         print(f"frame shape {frame_token.shape}")
         print(f"text token {text_token.shape}")
 
-        # z = [frame_token.to(z[0].device).to(z[0].dtype)]
-        # context = [text_token[0].to(context[0].dtype).to(context[0].device)]
+        z = [frame_token.to(z[0].device).to(z[0].dtype)]
+        context = [text_token[0].to(context[0].dtype).to(context[0].device)]
 
         @contextmanager
         def noop_no_sync():
@@ -678,4 +684,7 @@ class WanTI2V:
         if dist.is_initialized():
             dist.barrier()
 
-        return videos[0] if self.rank == 0 else None
+        if self.rank == 0:
+            return videos[0], base_name
+        else:
+            return None, base_name 

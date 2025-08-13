@@ -31,6 +31,32 @@ from .utils.fm_solvers_unipc import FlowUniPCMultistepScheduler
 from .utils.utils import best_output_size, masks_like
 
 
+import cv2
+from PIL import Image
+import torch
+
+def get_first_frame_as_tensor(video_path):
+    # 打开视频
+    cap = cv2.VideoCapture(video_path)
+    success, frame = cap.read()
+    cap.release()
+
+    if not success:
+        raise ValueError(f"无法读取视频第一帧: {video_path}")
+
+    # OpenCV 读进来是 BGR，需要转成 RGB
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # 转成 PIL.Image.Image
+    img = Image.fromarray(frame_rgb)
+
+    # 转成张量，形状 [3, H, W]
+    img_tensor = torch.from_numpy(frame_rgb).permute(2, 0, 1)  # HWC → CHW
+    img_tensor = img_tensor.to(dtype=torch.uint8)  # 保持原像素值类型
+
+    return img, img_tensor
+
+
 class WanTI2V:
 
     def __init__(
@@ -465,7 +491,14 @@ class WanTI2V:
         ow, oh = best_output_size(iw, ih, dw, dh, max_area)
 
         scale = max(ow / iw, oh / ih)
-        img = img.resize((round(iw * scale), round(ih * scale)), Image.LANCZOS)
+
+        # 示例
+        video_path = "/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/videos/8e2031d1-cbe4-4b5a-a54f-893df6805394.mp4"
+        img_pil, img_tensor = get_first_frame_as_tensor(video_path)
+        print(type(img_pil))       # <class 'PIL.Image.Image'>
+        print(img_tensor.shape)    # [3, H, W]
+
+        img = img_pil.resize((round(iw * scale), round(ih * scale)), Image.LANCZOS)
 
         # center-crop
         x1 = (img.width - ow) // 2
@@ -528,8 +561,8 @@ class WanTI2V:
         print(f"frame shape {frame_token.shape}")
         print(f"text token {text_token.shape}")
 
-        z = [frame_token.to(z[0].device).to(z[0].dtype)]
-        context = [text_token[0].to(context[0].dtype).to(context[0].device)]
+        # z = [frame_token.to(z[0].device).to(z[0].dtype)]
+        # context = [text_token[0].to(context[0].dtype).to(context[0].device)]
 
         @contextmanager
         def noop_no_sync():

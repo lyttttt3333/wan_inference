@@ -509,11 +509,26 @@ class WanTI2V:
             context = [t.to(self.device) for t in context]
             context_null = [t.to(self.device) for t in context_null]
 
+        print(f" context shape {context.shape}")
+        context = text_token.to(context.dtype).to(context.device)
+
         print("before")
         print(img.shape)
         z = self.vae.encode([img])
         print("after")
         print(z[0].shape)
+
+        base_name = "8e2031d1-cbe4-4b5a-a54f-893df6805394"
+        text_token_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/text_token/8e2031d1-cbe4-4b5a-a54f-893df6805394.pth"
+        frame_token_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/frame_token/8e2031d1-cbe4-4b5a-a54f-893df6805394.pth"
+
+        text_token = torch.load(text_token_path, map_location = "cpu")
+        frame_token = torch.load(frame_token_path, map_location = "cpu")
+
+        print(f"frame shape {frame_token.shape}")
+        print(f"text token {text_token.shape}")
+
+        z = [frame_token.to(z[0].device).to(z[0].dtype)]
 
         @contextmanager
         def noop_no_sync():

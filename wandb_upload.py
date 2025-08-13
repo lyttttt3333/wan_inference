@@ -7,8 +7,8 @@ wandb.init(
     entity="liyitong-Tsinghua University",
     project="self-forcing",
 )
-
-video_path = "/lustre/fsw/portfolios/av/users/shiyil/jfxiao/Wan2.2/ti2v-5B_1280*704_4_Summer_beach_vacation_style,_a_white_cat_wearing_s_20250813_093505.mp4"
-video_path = "/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/videos/8e2031d1-cbe4-4b5a-a54f-893df6805394.mp4"
-basename = os.path.basename(video_path)
-wandb.log({f"{basename}": wandb.Video(video_path, fps=16, format="mp4")})
+basename = "8057c4e7-daae-4927-bf90-f608866c45a1"
+src_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/AirVuz-V2-08052025/videos/{basename}.mp4"
+gen_path = f"/lustre/fsw/portfolios/av/users/shiyil/jfxiao/Wan2.2/{basename}.mp4"
+wandb.log({f"src/{basename}": wandb.Video(src_path, fps=16, format="mp4")})
+wandb.log({f"gen/{basename}": wandb.Video(gen_path, fps=16, format="mp4")})
